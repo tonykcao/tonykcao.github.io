@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - About Me</title>
+    <title>Portfolio - Art</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
 </head>
@@ -19,8 +19,8 @@
             <li class="dropdown">
                 <a href="art.html">Art</a>
                 <ul class="dropdown-content">
-                    <li><a href="art.html#ceramics">Ceramics</a></li>
-                    <li><a href="art.html#photos">Photos</a></li>
+                    <li><a href="#ceramics">Ceramics</a></li>
+                    <li><a href="#photos">Photos</a></li>
                 </ul>
             </li>
             <li><a href="contacts.html">Contacts</a></li>
@@ -28,18 +28,24 @@
         </ul>
     </nav>
     <main>
-        <section class="about">
-            <img class="profile-picture" src="images/profile.jpg" alt="Profile Picture" loading="lazy">
-            <div class="summary">
-                <h1>Your Name</h1>
-                <p>Short summary about yourself.</p>
-                <div class="social-links">
-                    <a href="https://github.com/yourusername" target="_blank">GitHub</a>
-                    <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
-                </div>
+        <section id="ceramics" class="gallery">
+            <h1>Ceramics</h1>
+            <div class="gallery-grid">
+                <img src="images/ceramic1.jpg" alt="Ceramic 1" loading="lazy">
+                <img src="images/ceramic2.jpg" alt="Ceramic 2" loading="lazy">
+            </div>
+        </section>
+        <section id="photos" class="gallery">
+            <h1>Photos</h1>
+            <div class="gallery-grid">
+                <img src="images/photo1.jpg" alt="Photo 1" loading="lazy">
+                <img src="images/photo2.jpg" alt="Photo 2" loading="lazy">
             </div>
         </section>
     </main>
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
     <script src="js/simulation.js"></script>
     <script src="js/script.js"></script>
 </body>
