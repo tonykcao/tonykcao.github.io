@@ -1,0 +1,44 @@
+:root {
+  --color-dark: #01161e;
+  --color-dark-blue: #124559;
+  --color-accent-blue: #598392;
+  --color-celadon: #aec3b0;
+  --color-shell: #eff6e0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Fira Code Mono', monospace;
+  background-color: var(--color-dark);
+  color: var(--color-celadon);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  padding: 20px;
+  justify-content: space-between;
+}
+
+.text-area {
+  flex: 1;
+}
+
+.section-links span {
+  margin-right: 20px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.section-links span:hover {
+  color: var(--color-accent-blue);
+}
+
+.sections section {
+  margin-top: 40px;
+}
