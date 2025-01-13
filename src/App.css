@@ -9,7 +9,7 @@
 body {
   margin: 0;
   font-family: 'Fira Code Mono', monospace;
-  background-color: var(--color-dark);
+  background-color: var(--color-celadon);
   color: var(--color-celadon);
 }
 
@@ -41,4 +41,17 @@ body {
 
 .sections section {
   margin-top: 40px;
+}
+:root {
+  --color-midnight: #124559;
+  --color-blue: #598392;
+}
+
+.social-icon {
+  color: var(--color-blue);
+  transition: color 0.1s ease-in-out;
+}
+
+.social-icon:hover {
+  color: var(--color-midnight);
 }
