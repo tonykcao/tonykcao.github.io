@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { useSpring, a } from '@react-spring/three';
 import { useDrag } from 'react-use-gesture';
 
+
 const DEFAULT_ROTATION = [0, 0, 0];
 const FLIPPED_ROTATION = [0, Math.PI, 0];
 const ROTATE_RATIO = 0.55;
@@ -13,13 +14,38 @@ const DRAG_DISTANCE_THRESHOLD = 20; // pixels
 const CLICK_DURATION_THRESHOLD = 200; // ms
 
 const RoundedCard = (props) => {
+  const width = 2, height = 3, radius = 0.3;
+  const borderWidth = 0.15, thickness = 0.02;
+
+  const borderColor = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const root = window.getComputedStyle(document.documentElement);
+      return root.getPropertyValue('--color-bone').trim() || '#000000';
+    }
+    return '#000000';
+  }, []);
+  const interiorFrontColor = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const root = window.getComputedStyle(document.documentElement);
+      return root.getPropertyValue('--color-blue').trim() || '#000000';
+    }
+    return '#000000';
+  }, []);
+  const interiorBackColor = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const root = window.getComputedStyle(document.documentElement);
+      return root.getPropertyValue('--color-celadon').trim() || '#000000';
+    }
+    return '#000000';
+  }, []);
+
   const [flipped, setFlipped] = useState(false);
   const [startTime, setStartTime] = useState(0);
 
   // spring anim
   const [spring, api] = useSpring(() => ({
     rotation: DEFAULT_ROTATION,
-    config: { mass: 0.5, tension: 40, friction: 4 },
+    config: { mass: 0.5, tension: 100, friction: 8 },
   }));
 
   // rotation when flipped changes
@@ -58,31 +84,6 @@ const RoundedCard = (props) => {
       }
     }
   });
-
-  const borderColor = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const root = window.getComputedStyle(document.documentElement);
-      return root.getPropertyValue('--color-bone').trim() || '#000000';
-    }
-    return '#000000';
-  }, []);
-  const interiorFrontColor = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const root = window.getComputedStyle(document.documentElement);
-      return root.getPropertyValue('--color-dark').trim() || '#000000';
-    }
-    return '#000000';
-  }, []);
-  const interiorBackColor = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const root = window.getComputedStyle(document.documentElement);
-      return root.getPropertyValue('--color-celadon').trim() || '#000000';
-    }
-    return '#000000';
-  }, []);
-
-  const width = 2, height = 3, radius = 0.3;
-  const borderWidth = 0.15, thickness = 0.02;
 
   const outerShape = useMemo(() => {
     const shape = new THREE.Shape();

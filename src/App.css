@@ -48,7 +48,7 @@ body {
 }
 
 .social-icon {
-  color: var(--color-blue);
+  color: var(--color-dark);
   transition: color 0.1s ease-in-out;
 }
 

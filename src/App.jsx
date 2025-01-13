@@ -1,4 +1,3 @@
-// App.jsx
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import RoundedCard from './components/RoundedCard';
@@ -16,10 +15,10 @@ export default function App() {
         camera={{ position: [0, 0, 5], near: 0.1, far: 1000 }}
         style={{ width: '100vw', height: '100vh' }}
       >
-        <ambientLight intensity={0.3} />
+        <ambientLight intensity={0.85} />
         <directionalLight
           position={[5, 10, 7.5]}
-          intensity={1}
+          intensity={1.5}
           castShadow
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
@@ -30,7 +29,7 @@ export default function App() {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-        <RoundedCard position={[0, 0, 0]} />
+        <RoundedCard position={[0, 0, 0]} scale = {[1.5, 1.5, 1.5]}/>
         <mesh
           receiveShadow
           rotation={[-Math.PI / 2, 0, 0]}

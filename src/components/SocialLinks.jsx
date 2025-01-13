@@ -3,6 +3,8 @@ import React from 'react';
 import { ReactComponent as LinkedInIcon } from '../assets/icons/linkedin.svg';
 import { ReactComponent as GitHubIcon } from '../assets/icons/github.svg';
 import { ReactComponent as CvIcon } from '../assets/icons/cv_icon.svg';
+import cvFile from '../assets/pdf/resume.pdf';
+
 
 const SocialLinks = () => {
   const iconStyle = { width: '40px', height: '40px' };
@@ -26,7 +28,7 @@ const SocialLinks = () => {
         <GitHubIcon style={iconStyle} />
       </a>
       <a
-        href="/assets/pdf/resume.pdf"
+        href={cvFile}
         target="_blank"
         rel="noopener noreferrer"
         className="social-icon"
