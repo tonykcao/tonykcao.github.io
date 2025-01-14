@@ -41,7 +41,7 @@ const RoundedCard = (props) => {
 
   const [flipped, setFlipped] = useState(false);
   const [startTime, setStartTime] = useState(0);
-
+  
   // spring anim
   const [spring, api] = useSpring(() => ({
     rotation: DEFAULT_ROTATION,

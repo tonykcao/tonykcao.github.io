@@ -12,26 +12,29 @@ const SocialLinks = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       <a
-        href="https://www.linkedin.com/in/tonykcao"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="social-icon"
-      >
-        <LinkedInIcon style={iconStyle} />
-      </a>
-      <a
         href="https://github.com/tonykcao"
         target="_blank"
         rel="noopener noreferrer"
         className="social-icon"
+        title='GitHub'
       >
         <GitHubIcon style={iconStyle} />
+      </a>
+      <a
+        href="https://www.linkedin.com/in/tonykcao"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="social-icon"
+        title='LinkedIn'
+      >
+        <LinkedInIcon style={iconStyle} />
       </a>
       <a
         href={cvFile}
         target="_blank"
         rel="noopener noreferrer"
         className="social-icon"
+        title='Resume PDF'
       >
         <CvIcon style={iconStyle} />
       </a>
