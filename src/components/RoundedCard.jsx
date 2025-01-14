@@ -148,7 +148,7 @@ const RoundedCard = (props) => {
 
       {/* Front Face*/}
       <IconGridFace
-        geometry={innerExtrudedGeometry.clone().translate(0, 0, 2*epsilon)}
+        geometry={innerExtrudedGeometry.clone().translate(0, 0, 2.5*epsilon)}
         svgA={flipIconURL}
         svgB={clickIconURL}
         cols={8}
@@ -161,7 +161,7 @@ const RoundedCard = (props) => {
 
       {/* Back Face*/}
       <ImageFace
-        geometry={innerExtrudedGeometry.clone().rotateY(Math.PI).translate(0, 0, -0.5*epsilon)}
+        geometry={innerExtrudedGeometry.clone().rotateY(Math.PI).translate(0, 0, -1*epsilon)}
         image={profileImage}
         crop={{ repeat: [1, 0.8], offset: [0.6, 0.5] }}
         scale={0.45}

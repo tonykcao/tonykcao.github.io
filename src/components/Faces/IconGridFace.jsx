@@ -134,7 +134,9 @@ const IconGridFace = ({
           bumpMap={iconsTexture}
           bumpScale={0.05}
           metalness={1}
-          roughness={0.2}
+          roughness={0.01}
+          clearcoat = {0.1}
+          clearcoatRoughness = {0.05}
           transparent
           depthTest={true}
         />
