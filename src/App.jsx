@@ -15,10 +15,10 @@ export default function App() {
         camera={{ position: [0, 0, 5], near: 0.1, far: 1000 }}
         style={{ width: '100vw', height: '100vh' }}
       >
-        <ambientLight intensity={0.85} />
+        <ambientLight intensity={0.8} />
         <directionalLight
-          position={[5, 10, 7.5]}
-          intensity={1.5}
+          position={[2, 4, 7.5]}
+          intensity={1}
           castShadow
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
