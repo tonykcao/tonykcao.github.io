@@ -14,6 +14,7 @@ function createIconsTexture({
   cols,
   rows,
   fillRatio,
+  secretsRGBA,
 }) {
   return new Promise((resolve) => {
     // Prepare an offscreen canvas.
@@ -22,8 +23,7 @@ function createIconsTexture({
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
 
-    console.log('generated');
-    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.fillStyle = secretsRGBA;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const cellWidth = canvas.width / cols;
@@ -89,15 +89,14 @@ export default function IconGridFace({
   svgArray = [],
   rotationArray = [],
   mirrorArray = [],
-  rowOffset = 0,
+  rowOffset = 1,
   cols = 8,
   rows = 8,
   fillRatio = 0.8,
-
   xSpeed = 0.01,
   ySpeed = 0.01,
-
   backgroundColor = '#ffffff',
+  secretsRGBA = 'rgba(255,255,255,1)'
 }) {
   const [iconsTexture, setIconsTexture] = useState(null);
   const materialRef = useRef();
@@ -112,6 +111,7 @@ export default function IconGridFace({
       cols,
       rows,
       fillRatio,
+      secretsRGBA,
     }).then((texture) => {
       if (!canceled) {
         setIconsTexture(texture);
@@ -128,6 +128,7 @@ export default function IconGridFace({
     cols,
     rows,
     fillRatio,
+    secretsRGBA,
   ]);
 
   useFrame((state, delta) => {
@@ -157,8 +158,6 @@ export default function IconGridFace({
           color={backgroundColor}
           metalness={0}
           roughness={0.4}
-          clearcoat={0.1}
-          clearcoatRoughness={0.05}
           depthTest={true}
         />
       </mesh>
@@ -172,6 +171,8 @@ export default function IconGridFace({
           bumpScale={0.05}
           metalness={1}
           roughness={0.01}
+          clearcoat={1}
+          clearcoatRoughness={0.05}
           transparent
           depthTest={true}
         />

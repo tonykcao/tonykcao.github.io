@@ -6,13 +6,15 @@ import { useDrag } from 'react-use-gesture';
 import IconGridFace from './Faces/IconGridFace';
 import ImageFace from './Faces/ImageFace';
 
+// import eyeIconURL from '../assets/icons/eyeslash.svg';
+// import ghostIconURL from '../assets/icons/ghost.svg';
 import clickIconURL from '../assets/icons/click.svg';
 import flipIconURL from '../assets/icons/flip.svg';
 import profileImage from '../assets/image/profile.jpg';
 
 const DEFAULT_ROTATION = [0, 0, 0];
 const FLIPPED_ROTATION = [0, Math.PI, 0];
-const ROTATE_RATIO = 0.55;
+const ROTATE_RATIO = 0.65;
 const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
 
 const DRAG_DISTANCE_THRESHOLD = 20; // pixels
@@ -112,23 +114,28 @@ const RoundedCard = (props) => {
     api.start({ rotation: flipped ? FLIPPED_ROTATION : DEFAULT_ROTATION });
   }, [flipped, api]);
 
-  const clickRotation = [90, 270, 90, 270];
-  const clickMirrored = [false, false, false, false];
-  const flipRotation = [45, 45, 45, 45];
-  const flipMirrored = [false, true, false, true];
-
-  const patternSize = 8;
-
   const alternateArray = (index, clickArray, flipArray) =>
     index % 2 === 0
       ? clickArray[Math.floor(index /2)]
       : flipArray[Math.floor(index /2)];
 
+  // const patternSize = 8;
+  // const eyeRotation = [0, 0, 0, 0];
+  // const eyeMirrored = [false, false, false, false];
+  // const ghostRotation = [0, 0, 0, 0];
+  // const ghostMirrored = [false, false, false, false];
+  // const svgArrayPeek = Array.from({ length: patternSize }, (_, index) => index % 2 === 0 ? eyeIconURL : ghostIconURL);
+  // const rotationArrayPeek = Array.from({ length: patternSize }, (_, index) => alternateArray(index, eyeRotation, ghostRotation));
+  // const mirrorArrayPeek = Array.from({ length: patternSize }, (_, index) => alternateArray(index, eyeMirrored, ghostMirrored));
+  const patternSize = 8;
+  const clickRotation = [90, 270, 90, 270];
+  const clickMirrored = [false, false, false, false];
+  const flipRotation = [45, 45, 45, 45];
+  const flipMirrored = [false, true, false, true];
   const svgArray = Array.from({ length: patternSize }, (_, index) => index % 2 === 0 ? clickIconURL : flipIconURL);
   const rotationArray = Array.from({ length: patternSize }, (_, index) => alternateArray(index, clickRotation, flipRotation));
   const mirrorArray = Array.from({ length: patternSize }, (_, index) => alternateArray(index, clickMirrored, flipMirrored));
 
-  const rowOffset = 1; // Shift for each row
 
   const borderGeometry = useMemo(() => {
     const shape = new THREE.Shape();
@@ -174,13 +181,13 @@ const RoundedCard = (props) => {
         svgArray={svgArray}
         rotationArray={rotationArray}
         mirrorArray={mirrorArray}
-        rowOffset={rowOffset}
         cols={8}
         rows={8}
         fillRatio={0.8}
         xSpeed={0.005}
         ySpeed={0.01}
         backgroundColor={interiorFrontColor}
+        secretsRGBA = 'rgba(0,0,0,0.01)'
       />
 
       {/* Back Face */}
