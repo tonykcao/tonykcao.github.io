@@ -4,7 +4,6 @@ import { useSpring, a } from '@react-spring/three';
 import { useDrag } from 'react-use-gesture';
 
 import IconGridFace from './Faces/IconGridFace';
-// import BlankFace from './Faces/BlankFace';
 import ImageFace from './Faces/ImageFace';
 
 import clickIconURL from '../assets/icons/click.svg';
@@ -20,8 +19,11 @@ const DRAG_DISTANCE_THRESHOLD = 20; // pixels
 const CLICK_DURATION_THRESHOLD = 200; // ms
 
 const RoundedCard = (props) => {
-  const width = 2, height = 3, radius = 0.3;
-  const borderWidth = 0.15, thickness = 0.015;
+  const width = 2,
+    height = 3,
+    radius = 0.3;
+  const borderWidth = 0.15,
+    thickness = 0.01;
   const epsilon = 0.01; // small offset to avoid z-fighting
 
   // colors.
@@ -65,7 +67,11 @@ const RoundedCard = (props) => {
   // geometry with thickness.
   const extrudeSettings = {
     depth: 0.015,
-    bevelEnabled: false
+    bevelEnabled: true,
+    bevelThickness: 0.005,
+    bevelSize: 0.2*epsilon,
+    bevelOffset: 0.005,
+    bevelSegments: 3,
   };
   const innerExtrudedGeometry = useMemo(() => {
     const geo = new THREE.ExtrudeGeometry(innerShape, extrudeSettings);
@@ -100,39 +106,61 @@ const RoundedCard = (props) => {
   // Animate card rotation.
   const [spring, api] = useSpring(() => ({
     rotation: DEFAULT_ROTATION,
-    config: { mass: 0.5, tension: 100, friction: 8 }
+    config: { mass: 0.5, tension: 100, friction: 8 },
   }));
   useEffect(() => {
     api.start({ rotation: flipped ? FLIPPED_ROTATION : DEFAULT_ROTATION });
   }, [flipped, api]);
 
+  const clickRotation = [90, 270, 90, 270];
+  const clickMirrored = [false, false, false, false];
+  const flipRotation = [45, 45, 45, 45];
+  const flipMirrored = [false, true, false, true];
+
+  const patternSize = 8;
+
+  const alternateArray = (index, clickArray, flipArray) =>
+    index % 2 === 0
+      ? clickArray[Math.floor(index /2)]
+      : flipArray[Math.floor(index /2)];
+
+  const svgArray = Array.from({ length: patternSize }, (_, index) => index % 2 === 0 ? clickIconURL : flipIconURL);
+  const rotationArray = Array.from({ length: patternSize }, (_, index) => alternateArray(index, clickRotation, flipRotation));
+  const mirrorArray = Array.from({ length: patternSize }, (_, index) => alternateArray(index, clickMirrored, flipMirrored));
+
+  const rowOffset = 1; // Shift for each row
+
+  const borderGeometry = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(-width / 2 + radius, -height / 2);
+    shape.lineTo(width / 2 - radius, -height / 2);
+    shape.quadraticCurveTo(width / 2, -height / 2, width / 2, -height / 2 + radius);
+    shape.lineTo(width / 2, height / 2 - radius);
+    shape.quadraticCurveTo(width / 2, height / 2, width / 2 - radius, height / 2);
+    shape.lineTo(-width / 2 + radius, height / 2);
+    shape.quadraticCurveTo(-width / 2, height / 2, -width / 2, height / 2 - radius);
+    shape.lineTo(-width / 2, -height / 2 + radius);
+    shape.quadraticCurveTo(-width / 2, -height / 2, -width / 2 + radius, -height / 2);
+  
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth: thickness,
+      bevelEnabled: true,
+      bevelThickness: 0.01,
+      bevelSize: 0.01,
+      bevelOffset: 0.01,
+      bevelSegments: 3,
+    });
+    geo.center();
+    return geo;
+  }, [width, height, radius, thickness]);
+
   return (
     <a.group {...props} {...bind()} rotation={spring.rotation}>
       {/* Card Border */}
-      <mesh geometry={new THREE.ExtrudeGeometry(
-        (() => {
-          const shape = new THREE.Shape();
-          shape.moveTo(-width / 2 + radius, -height / 2);
-          shape.lineTo(width / 2 - radius, -height / 2);
-          shape.quadraticCurveTo(width / 2, -height / 2, width / 2, -height / 2 + radius);
-          shape.lineTo(width / 2, height / 2 - radius);
-          shape.quadraticCurveTo(width / 2, height / 2, width / 2 - radius, height / 2);
-          shape.lineTo(-width / 2 + radius, height / 2);
-          shape.quadraticCurveTo(-width / 2, height / 2, -width / 2, height / 2 - radius);
-          shape.lineTo(-width / 2, -height / 2 + radius);
-          shape.quadraticCurveTo(-width / 2, -height / 2, -width / 2 + radius, -height / 2);
-          return shape;
-        })(),
-        {
-          depth: thickness,
-          bevelEnabled: true,
-          bevelThickness: 0.01,
-          bevelSize: 0.01,
-          bevelOffset: 0.01,
-          bevelSegments: 10
-        }
-      )}>
-        <meshStandardMaterial color={borderColor} side={THREE.FrontSide} 
+      <mesh geometry={borderGeometry}>
+        <meshStandardMaterial
+          color={borderColor}
+          side={THREE.FrontSide}
           metalness={0.05}
           roughness={0.4}
           clearcoat={1}
@@ -140,22 +168,24 @@ const RoundedCard = (props) => {
         />
       </mesh>
 
-      {/* Front Face*/}
+      {/* Front Face */}
       <IconGridFace
-        geometry={innerExtrudedGeometry.clone().translate(0, 0, 2.5*epsilon)}
-        svgA={flipIconURL}
-        svgB={clickIconURL}
+        geometry={innerExtrudedGeometry.clone().translate(0, 0, 1 * epsilon)}
+        svgArray={svgArray}
+        rotationArray={rotationArray}
+        mirrorArray={mirrorArray}
+        rowOffset={rowOffset}
         cols={8}
         rows={8}
         fillRatio={0.8}
-        xSpeed={0.01}
+        xSpeed={0.005}
         ySpeed={0.01}
         backgroundColor={interiorFrontColor}
       />
 
-      {/* Back Face*/}
+      {/* Back Face */}
       <ImageFace
-        geometry={innerExtrudedGeometry.clone().rotateY(Math.PI).translate(0, 0, -1*epsilon)}
+        geometry={innerExtrudedGeometry.clone().rotateY(Math.PI).translate(0, 0, -1 * epsilon)}
         image={profileImage}
         crop={{ repeat: [1, 0.8], offset: [0.6, 0.5] }}
         scale={0.45}

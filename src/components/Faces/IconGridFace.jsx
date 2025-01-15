@@ -1,116 +1,149 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
-import { a } from '@react-spring/three';
 import { useFrame } from '@react-three/fiber';
+import { a } from '@react-spring/three';
 
-
-// Utility: Create a grid texture with an interleaving pattern.
-const createIconsTexture = ({ svgA, svgB, cols, rows, fillRatio }) =>
-  new Promise((resolve) => {
+/**
+ * Create a grid texture from multiple SVGs, rotations, mirror flags, etc.
+ */
+function createIconsTexture({
+  svgArray,
+  rotationArray,
+  mirrorArray,      // array of booleans for horizontal mirroring
+  rowOffset,
+  cols,
+  rows,
+  fillRatio,
+}) {
+  return new Promise((resolve) => {
+    // Prepare an offscreen canvas.
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
 
-    // Clear canvas.
+    console.log('generated');
     ctx.fillStyle = 'rgba(255,255,255,0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const cellWidth = canvas.width / cols;
     const cellHeight = canvas.height / rows;
 
-    // Create Image objects.
-    const imgA = new Image();
-    const imgB = new Image();
-    imgA.src = svgA;
-    imgB.src = svgB;
+    const images = svgArray.map((svg) => {
+      const img = new Image();
+      img.src = svg;
+      return img;
+    });
 
     let loadedCount = 0;
     const onLoad = () => {
       loadedCount++;
-      if (loadedCount < 2) return;
-      // Both images loaded—draw the grid.
+      // when ALL are loaded:
+      if (loadedCount < images.length) return;
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-          // For even rows, let A cells be where (col+row) is even; for odd rows, reverse.
-          const isEvenRow = row % 2 === 0;
-          const isA = isEvenRow ? (col % 2 === 0) : (col % 2 !== 0);
-          const iconImg = isA ? imgA : imgB;
+          const index = row * cols + col + row*rowOffset;
+          const i = index % images.length;
 
-          let rotation = 0;
-          let mirror = false;
-          if (!isA) {
-            // B cell: rotation = 90° * (col + row) mod 360.
-            rotation = (90 * (col + row)) % 360;
-          } else {
-            // A cell: four–step cycle.
-            const index = (col + row) % 4;
-            if (index === 0) {
-              rotation = 0;
-            } else if (index === 1) {
-              rotation = 90;
-            } else if (index === 2) {
-              rotation = 0;
-              mirror = true;
-            } else if (index === 3) {
-              rotation = 90;
-              mirror = true;
-            }
-          }
-          const rad = rotation * (Math.PI / 180);
+          const img = images[i];
+          const rotationDeg = rotationArray[i] || 0;
+          const mirror = mirrorArray[i] || false;
+
+          const rotationRad = (Math.PI / 180) * rotationDeg;
+
           const cx = col * cellWidth + cellWidth / 2;
           const cy = row * cellHeight + cellHeight / 2;
+
           ctx.save();
           ctx.translate(cx, cy);
-          ctx.rotate(rad);
-          if (mirror) ctx.scale(-1, 1);
+          ctx.rotate(rotationRad);
+          if (mirror) {
+            ctx.scale(-1, 1); 
+          }
+
           const drawW = cellWidth * fillRatio;
           const drawH = cellHeight * fillRatio;
-          ctx.drawImage(iconImg, -drawW / 2, -drawH / 2, drawW, drawH);
+          ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
           ctx.restore();
         }
       }
+
       const texture = new THREE.CanvasTexture(canvas);
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.repeat.set(1, 1);
+
       resolve(texture);
     };
-    imgA.onload = onLoad;
-    imgB.onload = onLoad;
-  });
 
-const IconGridFace = ({
+    // hook up the onLoad callback for each image:
+    images.forEach((img) => {
+      img.onload = onLoad;
+    });
+  });
+}
+
+export default function IconGridFace({
   geometry,
-  svgA,
-  svgB,
+  svgArray = [],
+  rotationArray = [],
+  mirrorArray = [],
+  rowOffset = 0,
   cols = 8,
   rows = 8,
   fillRatio = 0.8,
+
   xSpeed = 0.01,
   ySpeed = 0.01,
-  backgroundColor = '#ffffff'
-}) => {
+
+  backgroundColor = '#ffffff',
+}) {
   const [iconsTexture, setIconsTexture] = useState(null);
   const materialRef = useRef();
 
   useEffect(() => {
-    createIconsTexture({ svgA, svgB, cols, rows, fillRatio }).then((texture) => {
-      setIconsTexture(texture);
+    let canceled = false;
+    createIconsTexture({
+      svgArray,
+      rotationArray,
+      mirrorArray,
+      rowOffset,
+      cols,
+      rows,
+      fillRatio,
+    }).then((texture) => {
+      if (!canceled) {
+        setIconsTexture(texture);
+      }
     });
-  }, [svgA, svgB, cols, rows, fillRatio]);
+    return () => {
+      canceled = true;
+    };
+  }, [
+    svgArray,
+    rotationArray,
+    mirrorArray,
+    rowOffset,
+    cols,
+    rows,
+    fillRatio,
+  ]);
 
   useFrame((state, delta) => {
     if (iconsTexture) {
-      iconsTexture.offset.x = (iconsTexture.offset.x + delta * xSpeed) % 1;
-      iconsTexture.offset.y = (iconsTexture.offset.y + delta * ySpeed) % 1;
+      iconsTexture.offset.x = (iconsTexture.offset.x + xSpeed * delta) % 1;
+      iconsTexture.offset.y = (iconsTexture.offset.y + ySpeed * delta) % 1;
     }
     if (materialRef.current) {
       const t = state.clock.getElapsedTime();
-      const blink_time = 10;
-      const shine_base = 0.2;
-      const shine_max = 0.5;
-      materialRef.current.opacity = (shine_base+shine_max)/2 + (shine_base-shine_max)/2 * Math.sin(Math.cos(t) * 2* Math.PI / blink_time);
+      const blinkTime = 10;
+      const shineBase = 0.2;
+      const shineMax = 0.5;
+      materialRef.current.opacity =
+        (shineBase + shineMax) / 2 +
+        ((shineBase - shineMax) / 2) *
+          Math.sin(Math.cos(t) * (2 * Math.PI) / blinkTime);
     }
   });
 
@@ -120,15 +153,17 @@ const IconGridFace = ({
     <group>
       {/* Background layer */}
       <mesh geometry={geometry}>
-        <meshStandardMaterial color={backgroundColor}
-          metalness = {0}
-          roughness = {0.4}
-          clearcoat = {0.1}
-          clearcoatRoughness = {0.05}
+        <meshStandardMaterial
+          color={backgroundColor}
+          metalness={0}
+          roughness={0.4}
+          clearcoat={0.1}
+          clearcoatRoughness={0.05}
           depthTest={true}
         />
       </mesh>
-      {/* Pattern layer */}
+
+      {/* Foreground layer (icon pattern) */}
       <mesh geometry={geometry}>
         <a.meshPhysicalMaterial
           ref={materialRef}
@@ -137,14 +172,10 @@ const IconGridFace = ({
           bumpScale={0.05}
           metalness={1}
           roughness={0.01}
-          // clearcoat = {0.1}
-          // clearcoatRoughness = {0.05}
           transparent
           depthTest={true}
         />
       </mesh>
     </group>
   );
-};
-
-export default IconGridFace;
+}
