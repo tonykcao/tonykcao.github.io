@@ -12,8 +12,7 @@ import clickIconURL from '../assets/icons/click.svg';
 import flipIconURL from '../assets/icons/flip.svg';
 import profileImage from '../assets/image/profile.jpg';
 
-const DEFAULT_ROTATION = [0, 0, 0];
-const FLIPPED_ROTATION = [0, Math.PI, 0];
+// const DEFAULT_ROTATION = [0, 0, 0];
 const ROTATE_RATIO = 0.65;
 const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
 
@@ -45,7 +44,8 @@ const RoundedCard = (props) => {
   }, []);
   const interiorBackColor = '#ffffff';
 
-  const [flipped, setFlipped] = useState(false);
+  // keep track of our card’s current Y rotation.
+  const [baseY, setBaseY] = useState(0);
   const [startTime, setStartTime] = useState(0);
 
   // compute inner shape.
@@ -71,7 +71,7 @@ const RoundedCard = (props) => {
     depth: 0.015,
     bevelEnabled: true,
     bevelThickness: 0.005,
-    bevelSize: 0.2*epsilon,
+    bevelSize: 0.2 * epsilon,
     bevelOffset: 0.005,
     bevelSegments: 3,
   };
@@ -81,43 +81,64 @@ const RoundedCard = (props) => {
     return geo;
   }, [innerShape, extrudeSettings]);
 
+  // Animate card rotation.
+  const [spring, api] = useSpring(() => ({
+    rotation: [0, baseY, 0],
+    config: { mass: 0.5, tension: 100, friction: 8 },
+  }));
+
+  useEffect(() => {
+    api.start({ rotation: [0, baseY, 0] });
+  }, [baseY, api]);
+
   // Drag gesture.
-  const bind = useDrag(({ down, movement: [mx, my], first, last }) => {
-    if (first) setStartTime(Date.now());
-    const baseRotation = flipped ? FLIPPED_ROTATION : DEFAULT_ROTATION;
-    const minX = baseRotation[0] - Math.PI * ROTATE_RATIO;
-    const maxX = baseRotation[0] + Math.PI * ROTATE_RATIO;
-    const minY = baseRotation[1] - Math.PI * ROTATE_RATIO;
-    const maxY = baseRotation[1] + Math.PI * ROTATE_RATIO;
+  const bind = useDrag(({ down, movement: [mx, my], first, last, event }) => {
+    if (first) {
+      setStartTime(Date.now());
+    }
+    const baseRotationX = 0;
+    const baseRotationY = baseY;
+    const minX = baseRotationX - Math.PI * ROTATE_RATIO;
+    const maxX = baseRotationX + Math.PI * ROTATE_RATIO;
+    const minY = baseRotationY - Math.PI * ROTATE_RATIO;
+    const maxY = baseRotationY + Math.PI * ROTATE_RATIO;
     if (down) {
-      const deltaX = clamp(baseRotation[0] + my / 500, minX, maxX);
-      const deltaY = clamp(baseRotation[1] + mx / 250, minY, maxY);
+      const deltaX = clamp(baseRotationX + my / 500, minX, maxX);
+      const deltaY = clamp(baseRotationY + mx / 250, minY, maxY);
       api.start({ rotation: [deltaX, deltaY, 0] });
     }
     if (last) {
       const duration = Date.now() - startTime;
       const distance = Math.sqrt(mx ** 2 + my ** 2);
-      if (duration < CLICK_DURATION_THRESHOLD && distance < DRAG_DISTANCE_THRESHOLD) {
-        setFlipped((prev) => !prev);
-      } else {
-        api.start({ rotation: baseRotation });
+    
+      // not valid click
+      if (duration >= CLICK_DURATION_THRESHOLD || distance >= DRAG_DISTANCE_THRESHOLD) {
+        api.start({ rotation: [baseRotationX, baseRotationY, 0] });
+        return;
       }
+    
+      const clickX = event.point.x;
+      const clickIncrement = clickX < 0 ? -Math.PI : Math.PI;
+      let targetY = baseY + clickIncrement;
+    
+      // champ targetY, infinite spin illusion
+      if (targetY > Math.PI) {
+        targetY -= 2 * Math.PI;
+        api.set({ rotation: [0, targetY - Math.PI, 0] });
+      } else if (targetY < -Math.PI) {
+        targetY += 2 * Math.PI;
+        api.set({ rotation: [0, targetY + Math.PI, 0] });
+      }
+    
+      setBaseY(targetY);
+      api.start({ rotation: [0, targetY, 0] });
     }
   });
 
-  // Animate card rotation.
-  const [spring, api] = useSpring(() => ({
-    rotation: DEFAULT_ROTATION,
-    config: { mass: 0.5, tension: 100, friction: 8 },
-  }));
-  useEffect(() => {
-    api.start({ rotation: flipped ? FLIPPED_ROTATION : DEFAULT_ROTATION });
-  }, [flipped, api]);
-
   const alternateArray = (index, clickArray, flipArray) =>
     index % 2 === 0
-      ? clickArray[Math.floor(index /2)]
-      : flipArray[Math.floor(index /2)];
+      ? clickArray[Math.floor(index / 2)]
+      : flipArray[Math.floor(index / 2)];
 
   // const patternSize = 8;
   // const eyeRotation = [0, 0, 0, 0];
@@ -132,10 +153,15 @@ const RoundedCard = (props) => {
   const clickMirrored = [false, false, false, false];
   const flipRotation = [45, 45, 45, 45];
   const flipMirrored = [false, true, false, true];
-  const svgArray = Array.from({ length: patternSize }, (_, index) => index % 2 === 0 ? clickIconURL : flipIconURL);
-  const rotationArray = Array.from({ length: patternSize }, (_, index) => alternateArray(index, clickRotation, flipRotation));
-  const mirrorArray = Array.from({ length: patternSize }, (_, index) => alternateArray(index, clickMirrored, flipMirrored));
-
+  const svgArray = Array.from({ length: patternSize }, (_, index) =>
+    index % 2 === 0 ? clickIconURL : flipIconURL
+  );
+  const rotationArray = Array.from({ length: patternSize }, (_, index) =>
+    alternateArray(index, clickRotation, flipRotation)
+  );
+  const mirrorArray = Array.from({ length: patternSize }, (_, index) =>
+    alternateArray(index, clickMirrored, flipMirrored)
+  );
 
   const borderGeometry = useMemo(() => {
     const shape = new THREE.Shape();
@@ -187,7 +213,7 @@ const RoundedCard = (props) => {
         xSpeed={0.005}
         ySpeed={0.01}
         backgroundColor={interiorFrontColor}
-        secretsRGBA = 'rgba(0,0,0,0.01)'
+        secretsRGBA='rgba(0,0,0,0.01)'
       />
 
       {/* Back Face */}
