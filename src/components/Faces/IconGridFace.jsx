@@ -13,7 +13,7 @@ const createIconsTexture = ({ svgA, svgB, cols, rows, fillRatio }) =>
     const ctx = canvas.getContext('2d');
 
     // Clear canvas.
-    ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const cellWidth = canvas.width / cols;
@@ -107,9 +107,10 @@ const IconGridFace = ({
     }
     if (materialRef.current) {
       const t = state.clock.getElapsedTime();
-      const shine_base = 0.3;
-      const shine_max = 0.4;
-      materialRef.current.opacity = (shine_base+shine_max)/2 + (shine_base-shine_max)/2 * Math.sin(t * 2);
+      const blink_time = 10;
+      const shine_base = 0.2;
+      const shine_max = 0.5;
+      materialRef.current.opacity = (shine_base+shine_max)/2 + (shine_base-shine_max)/2 * Math.sin(Math.cos(t) * 2* Math.PI / blink_time);
     }
   });
 
@@ -124,6 +125,7 @@ const IconGridFace = ({
           roughness = {0.4}
           clearcoat = {0.1}
           clearcoatRoughness = {0.05}
+          depthTest={true}
         />
       </mesh>
       {/* Pattern layer */}
@@ -135,8 +137,8 @@ const IconGridFace = ({
           bumpScale={0.05}
           metalness={1}
           roughness={0.01}
-          clearcoat = {0.1}
-          clearcoatRoughness = {0.05}
+          // clearcoat = {0.1}
+          // clearcoatRoughness = {0.05}
           transparent
           depthTest={true}
         />

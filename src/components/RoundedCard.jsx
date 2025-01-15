@@ -35,17 +35,11 @@ const RoundedCard = (props) => {
   const interiorFrontColor = useMemo(() => {
     if (typeof window !== 'undefined') {
       const root = window.getComputedStyle(document.documentElement);
-      return root.getPropertyValue('--color-blue').trim() || '#000000';
+      return root.getPropertyValue('--color-blue').trim() || '#ffffff';
     }
-    return '#000000';
+    return '#ffffff';
   }, []);
-  const interiorBackColor = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const root = window.getComputedStyle(document.documentElement);
-      return root.getPropertyValue('--color-bone').trim() || '#000000';
-    }
-    return '#000000';
-  }, []);
+  const interiorBackColor = '#ffffff';
 
   const [flipped, setFlipped] = useState(false);
   const [startTime, setStartTime] = useState(0);
@@ -169,8 +163,8 @@ const RoundedCard = (props) => {
         materialParams={{
           metalness: 0,
           roughness: 0.4,
-          clearcoat: 0.1,
-          clearcoatRoughness: 0.05,
+          clearcoat: 1,
+          clearcoatRoughness: 0,
         }}
       />
     </a.group>
