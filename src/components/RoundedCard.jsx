@@ -220,8 +220,8 @@ const RoundedCard = (props) => {
       <ImageFace
         geometry={innerExtrudedGeometry.clone().rotateY(Math.PI).translate(0, 0, -1 * epsilon)}
         image={profileImage}
-        crop={{ repeat: [1, 0.75], offset: [0.5, 0.5] }}
-        scale={0.5}
+        crop={{ repeat: [1, 0.75], offset: [0.525, 0.5] }}
+        scale={0.49}
         backgroundColor={interiorBackColor}
         materialParams={{
           metalness: 0,
