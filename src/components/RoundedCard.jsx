@@ -213,19 +213,19 @@ const RoundedCard = (props) => {
         xSpeed={0.005}
         ySpeed={0.01}
         backgroundColor={interiorFrontColor}
-        secretsRGBA='rgba(0,0,0,0.01)'
+        secretsRGBA='rgba(255,255,255,0.01)'
       />
 
       {/* Back Face */}
       <ImageFace
         geometry={innerExtrudedGeometry.clone().rotateY(Math.PI).translate(0, 0, -1 * epsilon)}
         image={profileImage}
-        crop={{ repeat: [1, 0.8], offset: [0.6, 0.5] }}
-        scale={0.45}
+        crop={{ repeat: [1, 0.75], offset: [0.5, 0.5] }}
+        scale={0.5}
         backgroundColor={interiorBackColor}
         materialParams={{
           metalness: 0,
-          roughness: 0.4,
+          roughness: 0.5,
           clearcoat: 1,
           clearcoatRoughness: 0,
         }}
