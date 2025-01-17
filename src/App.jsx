@@ -1,8 +1,10 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import RoundedCard from './components/RoundedCard';
+// import RoundedCard from './components/RoundedCard';
 import SocialLinks from './components/SocialLinks';
+import IntroCard from './components/IntroCard';
 import './App.css';
+import RoundedCard from './components/RoundedCard';
 
 export default function App() {
   return (
@@ -29,7 +31,7 @@ export default function App() {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-        <RoundedCard position={[0, 0, 0]} scale = {[1.5, 1.5, 1.5]}/>
+        <IntroCard position={[0, 0, 0]} scale = {[1.5, 1.5, 1.5]}/>
         <mesh
           receiveShadow
           rotation={[-Math.PI / 2, 0, 0]}
