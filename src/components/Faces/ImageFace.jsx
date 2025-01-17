@@ -15,14 +15,14 @@ const ImageFace = ({
   const [r0, r1] = crop.repeat;
   texture.repeat.set(r0 * scale, r1 * scale);
   texture.offset.set(...crop.offset);
-  texture.needsUpdate = true;
+  texture.needsUpdate = false;
 
   return (
     <mesh geometry={geometry}>
       <meshStandardMaterial
         map={texture}
         color={backgroundColor}
-        side={THREE.DoubleSide}
+        side={THREE.FrontSide}
         {...materialParams}
       />
     </mesh>

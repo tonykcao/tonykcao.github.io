@@ -210,8 +210,8 @@ const RoundedCard = (props) => {
         cols={8}
         rows={8}
         fillRatio={0.8}
-        xSpeed={0.005}
-        ySpeed={0.01}
+        xSpeed={0.0075}
+        ySpeed={0.015}
         backgroundColor={interiorFrontColor}
         secretsRGBA='rgba(255,255,255,0.01)'
       />

@@ -131,20 +131,20 @@ export default function IconGridFace({
     secretsRGBA,
   ]);
 
-  useFrame((state, delta) => {
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
     if (iconsTexture) {
-      iconsTexture.offset.x = (iconsTexture.offset.x + xSpeed * delta) % 1;
-      iconsTexture.offset.y = (iconsTexture.offset.y + ySpeed * delta) % 1;
+      iconsTexture.offset.x = (t* xSpeed) % 1;
+      iconsTexture.offset.y = (t * ySpeed) % 1;
     }
     if (materialRef.current) {
-      const t = state.clock.getElapsedTime();
-      const blinkTime = 10;
-      const shineBase = 0.2;
-      const shineMax = 0.5;
+      const blinkCoeff = 10;
+      const shineBase = 0.1;
+      const shineMax = 0.4;
       materialRef.current.opacity =
         (shineBase + shineMax) / 2 +
         ((shineBase - shineMax) / 2) *
-          Math.sin(Math.cos(t) * (2 * Math.PI) / blinkTime);
+          -Math.sin(Math.cos(t/ blinkCoeff) * (2 * Math.PI) );
     }
   });
 
