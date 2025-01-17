@@ -157,7 +157,7 @@ export default function IconGridFace({
         <meshStandardMaterial
           color={backgroundColor}
           metalness={0}
-          roughness={0.4}
+          roughness={0.55}
           depthTest={true}
         />
       </mesh>
@@ -170,7 +170,7 @@ export default function IconGridFace({
           bumpMap={iconsTexture}
           bumpScale={0.05}
           metalness={1}
-          roughness={0.01}
+          roughness={0.1}
           clearcoat={1}
           clearcoatRoughness={0.05}
           transparent
