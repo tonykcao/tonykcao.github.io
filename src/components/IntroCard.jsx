@@ -1,8 +1,10 @@
-import React, { useMemo } from 'react';
+// IntroCard.js
+import React, { useMemo, useState, Suspense } from 'react';
 import { createExtrudedGeometry } from './geometryUtils';
 import RoundedCard from './RoundedCard';
 import IconGridFace from './Faces/IconGridFace';
 import ImageFace from './Faces/ImageFace';
+import ghostFace from './Faces/GhostFace'; // ghostFace is now a plain helper function
 import profileImage from '../assets/image/profile.jpg';
 import clickIconURL from '../assets/icons/click.svg';
 import flipIconURL from '../assets/icons/flip.svg';
@@ -10,9 +12,17 @@ import flipIconURL from '../assets/icons/flip.svg';
 const interiorFrontColor = '#598392';
 const interiorBackColor = '#ffffff';
 
-const alternateArray = (index, arr1, arr2) => (index % 2 === 0 ? arr1[index % arr1.length] : arr2[index % arr2.length]);
+const alternateArray = (index, arr1, arr2) =>
+  index % 2 === 0 ? arr1[index % arr1.length] : arr2[index % arr2.length];
 
-const IntroCard = ({ position = [0, 0, 0], scale = [1, 1, 1] }) => {
+const IntroCard = ({
+  position = [0, 0, 0],
+  scale = [1, 1, 1],
+  onClick = () => {},
+}) => {
+  // Track whether the card has been clicked/flipped at least once.
+  const [hasClicked, setHasClicked] = useState(false);
+
   const width = 2;
   const height = 3;
   const radius = 0.3;
@@ -22,8 +32,9 @@ const IntroCard = ({ position = [0, 0, 0], scale = [1, 1, 1] }) => {
 
   const innerExtrudedGeometry = useMemo(() => {
     return createExtrudedGeometry(width, height, thicknessVal, radius, borderWidth, epsilon);
-  }, []);
+  }, [width, height, thicknessVal, radius, borderWidth, epsilon]);
 
+  // Front face configuration remains the same.
   const patternSize = 8;
   const clickRotation = [90, 270, 90, 270];
   const clickMirrored = [false, false, false, false];
@@ -43,11 +54,10 @@ const IntroCard = ({ position = [0, 0, 0], scale = [1, 1, 1] }) => {
   const customFront = {
     Component: IconGridFace,
     props: {
-      position: [0, 0, epsilon],
       geometry: innerExtrudedGeometry.clone(),
-      svgArray: svgArray,
-      rotationArray: rotationArray,
-      mirrorArray: mirrorArray,
+      svgArray,
+      rotationArray,
+      mirrorArray,
       cols: 8,
       rows: 8,
       fillRatio: 0.8,
@@ -58,6 +68,7 @@ const IntroCard = ({ position = [0, 0, 0], scale = [1, 1, 1] }) => {
     },
   };
 
+  // The final back face with the image.
   const customBack = {
     Component: ImageFace,
     props: {
@@ -75,7 +86,29 @@ const IntroCard = ({ position = [0, 0, 0], scale = [1, 1, 1] }) => {
     },
   };
 
-  return <RoundedCard position={position} scale={scale} cardFront={customFront} cardBack={customBack} />;
+  // Always compute the ghost face config unconditionally.
+  const ghostFaceConfig = useMemo(() => ghostFace(innerExtrudedGeometry), [innerExtrudedGeometry]);
+
+  // onValidFlip is triggered inside RoundedCard when a valid flip happens.
+  const handleValidFlip = (clickX) => {
+    if (!hasClicked) {
+      setHasClicked(true);
+    }
+  };
+
+  return (
+    <Suspense fallback={null}>
+      <RoundedCard
+        position={position}
+        scale={scale}
+        cardFront={customFront}
+        // Until the first valid flip, use ghostFaceConfig; after that, use customBack.
+        cardBack={hasClicked ? customBack : ghostFaceConfig}
+        onValidFlip={handleValidFlip}
+        onClick={onClick}
+      />
+    </Suspense>
+  );
 };
 
 export default IntroCard;
