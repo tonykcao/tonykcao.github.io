@@ -10,7 +10,7 @@ const alternateArray = (index, arr1, arr2) =>
  * ghostFace returns the configuration object.
  * accepts a geometry
  */
-const ghostFace = (geometry) => {
+const GhostFace = (geometry) => {
   const patternSizePeek = 2;
   const eyeRotation = [0];
   const eyeMirrored = [false];
@@ -42,4 +42,4 @@ const ghostFace = (geometry) => {
   };
 };
 
-export default ghostFace;
+export default GhostFace;

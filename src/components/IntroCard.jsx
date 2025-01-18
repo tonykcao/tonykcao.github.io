@@ -4,7 +4,6 @@ import { createExtrudedGeometry } from './geometryUtils';
 import RoundedCard from './RoundedCard';
 import IconGridFace from './Faces/IconGridFace';
 import ImageFace from './Faces/ImageFace';
-import ghostFace from './Faces/GhostFace'; // ghostFace is now a plain helper function
 import profileImage from '../assets/image/profile.jpg';
 import clickIconURL from '../assets/icons/click.svg';
 import flipIconURL from '../assets/icons/flip.svg';
@@ -86,11 +85,11 @@ const IntroCard = ({
     },
   };
 
-  // Always compute the ghost face config unconditionally.
-  const ghostFaceConfig = useMemo(() => ghostFace(innerExtrudedGeometry), [innerExtrudedGeometry]);
+  // // Always compute the ghost face config unconditionally.
+  // const ghostFaceConfig = useMemo(() => ghostFace(innerExtrudedGeometry), [innerExtrudedGeometry]);
 
   // onValidFlip is triggered inside RoundedCard when a valid flip happens.
-  const handleValidFlip = (clickX) => {
+  const handleValidFlip = () => {
     if (!hasClicked) {
       setHasClicked(true);
     }
@@ -103,7 +102,7 @@ const IntroCard = ({
         scale={scale}
         cardFront={customFront}
         // Until the first valid flip, use ghostFaceConfig; after that, use customBack.
-        cardBack={hasClicked ? customBack : ghostFaceConfig}
+        cardBack={customBack}
         onValidFlip={handleValidFlip}
         onClick={onClick}
       />
