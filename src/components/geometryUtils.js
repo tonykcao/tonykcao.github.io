@@ -1,4 +1,5 @@
-// geometryUtils.js
+// src/components/geometryUtils.js
+
 import * as THREE from 'three';
 
 /**

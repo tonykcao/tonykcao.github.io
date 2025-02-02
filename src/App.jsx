@@ -1,9 +1,12 @@
+// src/App.jsx
+
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 // import RoundedCard from './components/RoundedCard';
 import SocialLinks from './components/SocialLinks';
-import GhostCard from './components/GhostCard';
+// import GhostCard from './components/GhostCard';
 import './App.css';
+import IntroCard from './components/IntroCard';
 // import RoundedCard from './components/RoundedCard';
 
 export default function App() {
@@ -31,7 +34,7 @@ export default function App() {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-        <GhostCard position={[0, 0, 0]} scale = {[1.5, 1.5, 1.5]}/>
+        <IntroCard position={[0, 0, 0]} scale = {[1.5, 1.5, 1.5]}/>
         <mesh
           receiveShadow
           rotation={[-Math.PI / 2, 0, 0]}

@@ -1,4 +1,5 @@
-// RoundedCard.js
+// src/components/RoundedCard.js
+
 import React, { useMemo, useState } from 'react';
 import * as THREE from 'three';
 import { useSpring, a } from '@react-spring/three';

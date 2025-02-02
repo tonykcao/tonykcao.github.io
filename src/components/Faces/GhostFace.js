@@ -1,4 +1,6 @@
-import IconGridFace from '../Faces/IconGridFace';
+// src/components/Faces/GhostFace.js
+
+import IconGridFace from './IconGridFace';
 import eyeIconURL from '../../assets/icons/eyeslash.svg';
 import ghostIconURL from '../../assets/icons/ghost.svg';
 const interiorBackColor = '#666666';

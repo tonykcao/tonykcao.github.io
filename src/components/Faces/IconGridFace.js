@@ -1,3 +1,5 @@
+// src/components/Faces/IconGridFace.js
+
 import React, { useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';

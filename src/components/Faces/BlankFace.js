@@ -1,3 +1,5 @@
+// src/components/Faces/BlankFace.js
+
 import React from 'react';
 import * as THREE from 'three';
 

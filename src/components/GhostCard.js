@@ -1,20 +1,19 @@
-// IntroCard.js
+// src/components/GhostCard.js
+
 import React, { useMemo, useState, Suspense } from 'react';
 import { createExtrudedGeometry } from './geometryUtils';
 import RoundedCard from './RoundedCard';
 import IconGridFace from './Faces/IconGridFace';
-import ImageFace from './Faces/ImageFace';
-import profileImage from '../assets/image/profile.jpg';
+import GhostFace from './Faces/GhostFace';
 import clickIconURL from '../assets/icons/click.svg';
 import flipIconURL from '../assets/icons/flip.svg';
 
 const interiorFrontColor = '#598392';
-const interiorBackColor = '#ffffff';
 
 const alternateArray = (index, arr1, arr2) =>
   index % 2 === 0 ? arr1[index % arr1.length] : arr2[index % arr2.length];
 
-const IntroCard = ({
+const GhostCard = ({
   position = [0, 0, 0],
   scale = [1, 1, 1],
   onClick = () => {},
@@ -67,26 +66,7 @@ const IntroCard = ({
     },
   };
 
-  // The final back face with the image.
-  const customBack = {
-    Component: ImageFace,
-    props: {
-      geometry: innerExtrudedGeometry.clone(),
-      image: profileImage,
-      crop: { repeat: [1, 0.75], offset: [0.525, 0.5] },
-      scale: 0.49,
-      backgroundColor: interiorBackColor,
-      materialParams: {
-        metalness: 0,
-        roughness: 0.5,
-        clearcoat: 1,
-        clearcoatRoughness: 0,
-      },
-    },
-  };
-
-  // // Always compute the ghost face config unconditionally.
-  // const ghostFaceConfig = useMemo(() => ghostFace(innerExtrudedGeometry), [innerExtrudedGeometry]);
+  const ghostFaceConfig = useMemo(() => GhostFace(innerExtrudedGeometry), [innerExtrudedGeometry]);
 
   // onValidFlip is triggered inside RoundedCard when a valid flip happens.
   const handleValidFlip = () => {
@@ -102,7 +82,7 @@ const IntroCard = ({
         scale={scale}
         cardFront={customFront}
         // Until the first valid flip, use ghostFaceConfig; after that, use customBack.
-        cardBack={customBack}
+        cardBack={ghostFaceConfig}
         onValidFlip={handleValidFlip}
         onClick={onClick}
       />
@@ -110,4 +90,4 @@ const IntroCard = ({
   );
 };
 
-export default IntroCard;
+export default GhostCard;

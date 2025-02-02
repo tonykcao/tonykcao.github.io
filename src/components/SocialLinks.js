@@ -1,4 +1,5 @@
-// src/components/SocialLinks.jsx
+// src/components/SocialLinks.js
+
 import React from 'react';
 import { ReactComponent as LinkedInIcon } from '../assets/icons/linkedin.svg';
 import { ReactComponent as GitHubIcon } from '../assets/icons/github.svg';
