@@ -626,6 +626,7 @@ blockquote {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
+  padding-left: 2rem;
   text-decoration: none;
   display: flex;
   position: relative;
