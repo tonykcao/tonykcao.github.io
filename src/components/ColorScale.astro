@@ -1,0 +1,26 @@
+---
+import ColorSwatch from './ColorSwatch.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  colors: Record<string, string>;
+  selectedKeys?: string[];
+}
+
+const { title, description, colors, selectedKeys = [] } = Astro.props;
+---
+
+<div class="mb-10">
+  <h2 class="text-lg font-semibold mb-2 text-content">{title}</h2>
+  <div class="flex flex-wrap gap-2 mb-2 justify-center">
+    {Object.entries(colors).map(([key, value]) => (
+      <ColorSwatch
+        color={value}
+        label={key}
+        isSelected={selectedKeys.includes(key)}
+      />
+    ))}
+  </div>
+  {description && <p class="text-xs mt-2 text-content opacity-60 text-center">{description}</p>}
+</div>
